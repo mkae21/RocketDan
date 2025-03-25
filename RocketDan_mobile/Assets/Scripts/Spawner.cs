@@ -11,7 +11,6 @@ public class Spawner : MonoBehaviour
     private Queue<GameObject> zombiePool = new Queue<GameObject>();
     private float timeBetSpawn; // 다음 배치까지의 시간 간격
     private float lastSpawnTime;
-    private int count = 3;
 
     void Awake()
     {
