@@ -6,6 +6,10 @@ TagManager:
   tags:
   - Hero
   - Zombie
+  - Top
+  - Middle
+  - Bottom
+  - Floor
   layers:
   - Default
   - TransparentFX
