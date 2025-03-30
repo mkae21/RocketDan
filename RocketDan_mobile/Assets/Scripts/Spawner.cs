@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class Spawner : MonoBehaviour
 {
@@ -52,19 +54,19 @@ public class Spawner : MonoBehaviour
             var zombie = GetObject();
             zombie.transform.position = transform.position;
 
-            SpriteRenderer sr = zombie.GetComponent<SpriteRenderer>();
-
+            SortingGroup sortingGroup = zombie.GetComponent<SortingGroup>();
+            
             if(gameObject.tag == "Top"){
                 zombie.layer = LayerMask.NameToLayer("TopZombie");
-                sr.sortingOrder = 1;
+                sortingGroup.sortingOrder = 1;
             }
             else if(gameObject.tag == "Middle"){
                 zombie.layer = LayerMask.NameToLayer("MiddleZombie");
-                sr.sortingOrder = 2;
+                sortingGroup.sortingOrder = 2;
             }
             else{
                 zombie.layer = LayerMask.NameToLayer("BottomZombie");
-                sr.sortingOrder = 3;
+                sortingGroup.sortingOrder = 3;
             }
         }
     }

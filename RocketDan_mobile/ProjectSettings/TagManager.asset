@@ -47,3 +47,12 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: TopZombie
+    uniqueID: 1652238783
+    locked: 0
+  - name: MiddleZombie
+    uniqueID: 4260459945
+    locked: 0
+  - name: BottomZombie
+    uniqueID: 2884965549
+    locked: 0

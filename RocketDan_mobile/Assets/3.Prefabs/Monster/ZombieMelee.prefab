@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 4508218423654699471}
   - component: {fileID: 7810009038335047116}
   - component: {fileID: 5954554458867327858}
+  - component: {fileID: -6483086080792684086}
   m_Layer: 0
   m_Name: ZombieMelee
   m_TagString: Zombie
@@ -237,6 +238,18 @@ CapsuleCollider2D:
   m_Offset: {x: -0.13526675, y: 0.46094978}
   m_Size: {x: 0.5478377, y: 1.0249655}
   m_Direction: 0
+--- !u!210 &-6483086080792684086
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 319310827380095937}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortAtRoot: 0
 --- !u!1 &2094693183665648150
 GameObject:
   m_ObjectHideFlags: 0
