@@ -12,6 +12,8 @@ public class Zombie : MonoBehaviour
     [Header("Zombie Speed Settings")]
     [SerializeField] private float jumpForce = 18f;
     [SerializeField] private float backSpeed = 2f;
+    [SerializeField] private float rayOffsetX = 0.7f;
+    [SerializeField] private float rayOffsetY = 0.6f;
     private Vector2 jumpDirection = new Vector2(0,1f).normalized;
     private Vector2 rayPos;
     private bool isJump;
@@ -20,7 +22,8 @@ public class Zombie : MonoBehaviour
 
     private Rigidbody2D rb;
 
-    void Awake()
+#region 이벤트
+    void OnEnable()
     {
         rb = GetComponent<Rigidbody2D>();
         speed = 3f;
@@ -28,23 +31,17 @@ public class Zombie : MonoBehaviour
         isStepped = false;
         isFloor = true;
         isWall = false;
+
+        CheckFirst();
     }
 
     void FixedUpdate()
     {
         ZombieMove();
-        rayPos = new Vector2(transform.position.x - 0.5f, transform.position.y + 0.6f);
-        Debug.DrawRay(rayPos, Vector2.left * 0.2f, Color.red);
     }
 
-    private void ZombieMove()
-    {
-        if (!isStepped && rb.velocity.x >= -speed)
-            rb.velocity = new Vector2(-speed, rb.velocity.y);
 
-    }
-
-    void OnCollisionStay2D(Collision2D collision)
+    void OnCollisionEnter2D(Collision2D collision)
     {
         // 좀비끼리 충돌했을 때
         if (collision.gameObject.CompareTag("Zombie"))
@@ -57,26 +54,15 @@ public class Zombie : MonoBehaviour
                 if (me > other)
                 {
                     Debug.Log("같은 레이어 좀비와 충돌 → 점프!");
-                    JumpOver();
+                    Jump();
                 }
             }
         }
-    }
-
-
-    void OnCollisionEnter2D(Collision2D other)
-    {
         // 바닥에 닿았는지 확인
-        if(other.gameObject.CompareTag("Floor"))
+        if(collision.gameObject.CompareTag("Floor"))
         {
             Debug.Log("바닥에 닿음");
             isFloor = true;
-        }
-
-        if(other.gameObject.CompareTag("Hero"))
-        {
-            isWall = true;
-            ChangeMass();
         }
     }
 
@@ -86,7 +72,6 @@ public class Zombie : MonoBehaviour
         {
             float other = collision.transform.position.y;
             float me = transform.position.y;
-
 
             if(me < other && isFloor && isWall){
                 Debug.Log("✅ 머리 밟힘 조건 통과 → 뒤로 이동!");
@@ -100,22 +85,20 @@ public class Zombie : MonoBehaviour
             }
         }
     }
+#endregion
 
-    
 
-    IEnumerator Jump()
+#region private 메서드
+    private void ZombieMove()
     {
-        if(!isWall){
-            isJump = true;
-            isFloor = false;
-            rb.AddForce(jumpDirection * jumpForce, ForceMode2D.Impulse);
-            yield return new WaitForSeconds(1.5f);
-            isJump = false;
-        }
+        if (!isStepped && rb.velocity.x >= -speed)
+            rb.velocity = new Vector2(-speed, rb.velocity.y);
+
     }
+
     private void ChangeMass()
     {
-        if(isWall)
+        if(isWall && isFloor)
             rb.mass = 8f;
         else
             rb.mass = 1f;
@@ -123,23 +106,53 @@ public class Zombie : MonoBehaviour
 
     private void CheckFirst()
     {
-        RaycastHit2D hit = Physics2D.Raycast(rayPos, Vector2.left, 0.2f);
-
-        if(hit.collider != null && hit.collider.CompareTag("Hero"))
-        {
-            Debug.Log("내가 1등이다");
-            isWall = true;
-        }
+        StartCoroutine(CheckFirstCoroutine());
     }
+
     private void MoveBack()
     {
-        StartCoroutine(MoveBackCoroutine());
+        if(!isStepped && !isJump)
+            StartCoroutine(MoveBackCoroutine());
     }
 
-    private void JumpOver(){
-        StartCoroutine(Jump());
+    private void Jump(){
+        if(!isJump)
+            StartCoroutine(JumpCoroutine());
     }
+#endregion
 
+#region 코루틴
+    IEnumerator CheckFirstCoroutine()
+    {
+        
+        while(true)
+        {
+            rayPos = new Vector2(transform.position.x - rayOffsetX, transform.position.y + rayOffsetY);
+            Debug.DrawRay(rayPos, Vector2.left * 0.2f, Color.red);
+
+            RaycastHit2D hit = Physics2D.Raycast(rayPos, Vector2.left, 0.2f);
+
+            if(hit.collider != null && hit.collider.CompareTag("Hero"))
+            {
+                Debug.Log("내가 1등이다");
+                isWall = true;
+                ChangeMass();
+            }
+
+            yield return new WaitForSeconds(0.1f);
+        }
+    }
+    IEnumerator JumpCoroutine()
+    {
+        while (!isWall)
+        {
+            isJump = true;
+            isFloor = false;
+            rb.AddForce(jumpDirection * jumpForce, ForceMode2D.Impulse);
+            yield return new WaitForSeconds(1.5f);
+            isJump = false;
+        }
+    }
     IEnumerator MoveBackCoroutine()
     {
         // 이동 중지
@@ -152,7 +165,7 @@ public class Zombie : MonoBehaviour
 
         while (timer < duration)
         {
-            rb.velocity = new Vector2(backSpeed,0);
+            rb.velocity = new Vector2(backSpeed,rb.velocity.y);
             timer += Time.deltaTime;
             yield return new WaitForFixedUpdate();
         }
@@ -163,8 +176,8 @@ public class Zombie : MonoBehaviour
         isStepped = false;
         isWall = false; 
         
-        // 다시 체크, 애매하게 끼인 경우를 위해
-        CheckFirst();
         ChangeMass();
     }
+#endregion
+
 }

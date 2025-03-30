@@ -41,7 +41,7 @@ public class Spawner : MonoBehaviour
 
     void Awake()
     {
-        Initialize(10);
+        Initialize(200);
         StartCoroutine(SpawnRoutine());
     }
 
@@ -69,7 +69,23 @@ public class Spawner : MonoBehaviour
         }
     }
 
+    IEnumerator ReturnAfterSeconds(GameObject obj,float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+
+        if(obj.activeSelf)
+        {
+            Debug.Log("풀에 들어간다");
+            ReturnObject(obj);
+        }
+    }
+
     private GameObject CreateNew(){
+
+        if(zombiePool.Count > 200){
+            return null;
+        }
+
         GameObject newZombie = Instantiate(zombiePrefab,transform);
         newZombie.gameObject.SetActive(false);
         return newZombie;
@@ -82,19 +98,21 @@ public class Spawner : MonoBehaviour
     }
 
     public GameObject GetObject(){
+        GameObject obj;
+
         if(zombiePool.Count > 0){
-            GameObject obj = zombiePool.Dequeue();
-            obj.transform.SetParent(null);
-            obj.gameObject.SetActive(true);
-            return obj;
+            obj = zombiePool.Dequeue();
         }
         else{
-            GameObject obj = CreateNew();
-            obj.transform.SetParent(null);
-            obj.gameObject.SetActive(true);
-            return obj;
+            obj = CreateNew();
         }
 
+        obj.transform.SetParent(null);
+        obj.gameObject.SetActive(true);
+
+        StartCoroutine(ReturnAfterSeconds(obj,10f));
+
+        return obj;
     }
     public void ReturnObject(GameObject obj){
         obj.SetActive(false);

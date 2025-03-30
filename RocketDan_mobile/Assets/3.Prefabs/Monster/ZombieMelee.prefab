@@ -74,6 +74,8 @@ MonoBehaviour:
   isFloor: 0
   jumpForce: 12
   backSpeed: 2
+  rayOffsetX: 0.7
+  rayOffsetY: 0.6
 --- !u!50 &5036497618166558493
 Rigidbody2D:
   serializedVersion: 4
@@ -97,9 +99,9 @@ Rigidbody2D:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_Interpolate: 1
+  m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
   m_Constraints: 4
 --- !u!212 &4508218423654699471
 SpriteRenderer:
@@ -185,7 +187,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.22524434, y: 1.1169078}
+  m_Offset: {x: -0.25857604, y: 1.035747}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -196,7 +198,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.3691299, y: 0.02750206}
+  m_Size: {x: 0.41550756, y: 0.058489323}
   m_EdgeRadius: 0
 --- !u!70 &5954554458867327858
 CapsuleCollider2D:
@@ -230,8 +232,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.11647777, y: 0.483155}
-  m_Size: {x: 0.40094152, y: 1.069376}
+  m_Offset: {x: -0.13526675, y: 0.46094978}
+  m_Size: {x: 0.5478377, y: 1.0249655}
   m_Direction: 0
 --- !u!1 &2094693183665648150
 GameObject:
