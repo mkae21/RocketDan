@@ -76,6 +76,8 @@ MonoBehaviour:
   backSpeed: 2
   rayOffsetX: 0.7
   rayOffsetY: 0.6
+  rayHeadOffSetX: 0.3
+  rayHeadOffSetY: 1
 --- !u!50 &5036497618166558493
 Rigidbody2D:
   serializedVersion: 4
@@ -162,7 +164,7 @@ BoxCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 319310827380095937}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 0}
   m_IncludeLayers:

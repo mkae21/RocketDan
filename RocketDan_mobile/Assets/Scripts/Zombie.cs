@@ -14,8 +14,12 @@ public class Zombie : MonoBehaviour
     [SerializeField] private float backSpeed = 2f;
     [SerializeField] private float rayOffsetX = 0.7f;
     [SerializeField] private float rayOffsetY = 0.6f;
+    [SerializeField] private float rayHeadOffSetX = 0.3f;
+    [SerializeField] private float rayHeadOffSetY = 1f;
+
     private Vector2 jumpDirection = new Vector2(0,1f).normalized;
     private Vector2 rayPos;
+    private Vector2 rayHeadPos;
     private bool isJump;
     private bool isStepped; 
     private bool isWall;
@@ -33,11 +37,21 @@ public class Zombie : MonoBehaviour
         isWall = false;
 
         CheckFirst();
+        CheckHead();
     }
 
     void FixedUpdate()
     {
         ZombieMove();
+
+
+        //앞 검사
+        rayPos = new Vector2(transform.position.x - rayOffsetX, transform.position.y + rayOffsetY);
+        Debug.DrawRay(rayPos, Vector2.left * 0.2f, Color.red);
+
+        //위 검사
+        rayHeadPos = new Vector2(transform.position.x - rayHeadOffSetX , transform.position.y + rayHeadOffSetY);
+        Debug.DrawRay(rayHeadPos, Vector2.up * 0.2f, Color.red);
     }
 
 
@@ -66,25 +80,25 @@ public class Zombie : MonoBehaviour
         }
     }
 
-    void OnTriggerStay2D(Collider2D collision)
-    {
-        if (collision.gameObject.CompareTag("Zombie") && !isJump && !isStepped)
-        {
-            float other = collision.transform.position.y;
-            float me = transform.position.y;
+    // void OnTriggerStay2D(Collider2D collision)
+    // {
+    //     if (collision.gameObject.CompareTag("Zombie") && !isJump && !isStepped)
+    //     {
+    //         float other = collision.transform.position.y;
+    //         float me = transform.position.y;
 
-            if(me < other && isFloor && isWall){
-                Debug.Log("✅ 머리 밟힘 조건 통과 → 뒤로 이동!");
-                MoveBack();
-            }
-            else
-            {
-                if (me >= other) Debug.Log("❌ 머리보다 위에 있지 않음");
-                if (!isFloor) Debug.Log("❌ 바닥에 닿아있지 않음");
-                if (!isWall) Debug.Log("❌ 벽(영웅)에 닿아있지 않음");
-            }
-        }
-    }
+    //         if(me < other && isFloor && isWall){
+    //             Debug.Log("✅ 머리 밟힘 조건 통과 → 뒤로 이동!");
+    //             MoveBack();
+    //         }
+    //         // else
+    //         // {
+    //         //     if (me >= other) Debug.Log("❌ 머리보다 위에 있지 않음");
+    //         //     if (!isFloor) Debug.Log("❌ 바닥에 닿아있지 않음");
+    //         //     if (!isWall) Debug.Log("❌ 벽(영웅)에 닿아있지 않음");
+    //         // }
+    //     }
+    // }
 #endregion
 
 
@@ -108,16 +122,18 @@ public class Zombie : MonoBehaviour
     {
         StartCoroutine(CheckFirstCoroutine());
     }
+    private void CheckHead()
+    {
+        StartCoroutine(CheckHeadCoroutine());
+    }
 
     private void MoveBack()
     {
-        if(!isStepped && !isJump)
-            StartCoroutine(MoveBackCoroutine());
+        StartCoroutine(MoveBackCoroutine());
     }
 
     private void Jump(){
-        if(!isJump)
-            StartCoroutine(JumpCoroutine());
+        StartCoroutine(JumpCoroutine());
     }
 #endregion
 
@@ -142,6 +158,27 @@ public class Zombie : MonoBehaviour
             yield return new WaitForSeconds(0.1f);
         }
     }
+
+    IEnumerator CheckHeadCoroutine()
+    {
+        while(true)
+        {
+            rayHeadPos = new Vector2(transform.position.x - rayHeadOffSetX , transform.position.y + rayHeadOffSetY);
+            Debug.DrawRay(rayHeadPos, Vector2.up * 0.2f, Color.red);
+
+            RaycastHit2D hit = Physics2D.Raycast(rayHeadPos, Vector2.up, 0.2f);
+
+            if(hit.collider != null && hit.collider.CompareTag("Zombie") && !isJump && !isStepped && isFloor && isWall)
+            {
+                Debug.Log("머리 밟힘 Raycast");
+                MoveBack();
+                
+            }
+
+            yield return new WaitForSeconds(0.1f);
+        }
+    }
+
     IEnumerator JumpCoroutine()
     {
         while (!isWall)
