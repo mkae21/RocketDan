@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -5,36 +6,65 @@ public class Spawner : MonoBehaviour
 {
 
     [SerializeField]
-    public float timeBetSpawnMin = 0.5f; // 다음 배치까지의 시간 간격 최솟값
-    public float timeBetSpawnMax = 2.0f; // 다음 배치까지의 시간 간격 최댓값
+    public float timeBetSpawnMin = 5.0f; // 다음 배치까지의 시간 간격 최솟값
+    public float timeBetSpawnMax = 30.0f; // 다음 배치까지의 시간 간격 최댓값
     public GameObject zombiePrefab;
-    private Queue<GameObject> zombiePool = new Queue<GameObject>();
-    private float timeBetSpawn; // 다음 배치까지의 시간 간격
-    private float lastSpawnTime;
+    private Queue<GameObject> zombiePool = new Queue<GameObject>();//Object Pooling
+
+
+    // void Update()
+    // {
+    //     //스페이스 누를때 마다 좀비 1마리 생성
+    //     if (Input.GetKeyDown(KeyCode.Space))
+    //     {
+    //         GameObject zombie = Instantiate(zombiePrefab, transform.position, Quaternion.identity);
+    //         SpriteRenderer sr = zombie.GetComponent<SpriteRenderer>();
+
+    //         if (gameObject.CompareTag("Top"))
+    //         {
+    //             zombie.layer = LayerMask.NameToLayer("TopZombie");
+    //             sr.sortingOrder = 1;
+    //         }
+    //         else if (gameObject.CompareTag("Middle"))
+    //         {
+    //             zombie.layer = LayerMask.NameToLayer("MiddleZombie");
+    //             sr.sortingOrder = 2;
+    //         }
+    //         else
+    //         {
+    //             zombie.layer = LayerMask.NameToLayer("BottomZombie");
+    //             sr.sortingOrder = 3;
+    //         }
+    //     }
+
+    // }
 
     void Awake()
     {
-        Initialize(30);
-        lastSpawnTime = 0f;
-        timeBetSpawn = 0f;
+        Initialize(10);
+        StartCoroutine(SpawnRoutine());
     }
 
-    void Update()
-    {
-        if(Time.time >= lastSpawnTime + timeBetSpawn){
-            lastSpawnTime = Time.time;
-
-            timeBetSpawn = Random.Range(timeBetSpawnMin,timeBetSpawnMax);
+    IEnumerator SpawnRoutine(){
+        while(true){
+            yield return new WaitForSeconds(Random.Range(timeBetSpawnMin,timeBetSpawnMax));
 
             var zombie = GetObject();
             zombie.transform.position = transform.position;
 
-            if(gameObject.tag == "Top")
+            SpriteRenderer sr = zombie.GetComponent<SpriteRenderer>();
+
+            if(gameObject.tag == "Top"){
                 zombie.layer = LayerMask.NameToLayer("TopZombie");
-            else if(gameObject.tag == "Middle")
+                sr.sortingOrder = 1;
+            }
+            else if(gameObject.tag == "Middle"){
                 zombie.layer = LayerMask.NameToLayer("MiddleZombie");
+                sr.sortingOrder = 2;
+            }
             else{
                 zombie.layer = LayerMask.NameToLayer("BottomZombie");
+                sr.sortingOrder = 3;
             }
         }
     }
