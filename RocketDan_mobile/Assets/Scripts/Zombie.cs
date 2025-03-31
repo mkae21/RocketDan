@@ -26,11 +26,13 @@ public class Zombie : MonoBehaviour
     private bool isWall;
 
     private Rigidbody2D rb;
+    private Animator anim;
 
 #region 이벤트
     void OnEnable()
     {
         rb = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>();
         speed = 3f;
         isJump = false;
         isStepped = false;
@@ -45,13 +47,13 @@ public class Zombie : MonoBehaviour
     {
         ZombieMove();
 
-        //앞 검사
-        rayPos = new Vector2(transform.position.x - rayOffsetX, transform.position.y + rayOffsetY);
-        Debug.DrawRay(rayPos, Vector2.left * 0.2f, Color.red);
+        // //앞 검사
+        // rayPos = new Vector2(transform.position.x - rayOffsetX, transform.position.y + rayOffsetY);
+        // Debug.DrawRay(rayPos, Vector2.left * 0.2f, Color.red);
 
-        //위 검사
-        rayHeadPos = new Vector2(transform.position.x - rayHeadOffSetX , transform.position.y + rayHeadOffSetY);
-        Debug.DrawRay(rayHeadPos, Vector2.up * 0.2f, Color.red);
+        // //위 검사
+        // rayHeadPos = new Vector2(transform.position.x - rayHeadOffSetX , transform.position.y + rayHeadOffSetY);
+        // Debug.DrawRay(rayHeadPos, Vector2.up * 0.2f, Color.red);
     }
 
 
@@ -83,6 +85,11 @@ public class Zombie : MonoBehaviour
 #endregion
 
 #region public 메서드
+    public void OnAttack()
+    {
+        Debug.Log("공격중");
+    }
+
     public void InitLayer()
     {
         layerMask = 1  << gameObject.layer;
@@ -102,10 +109,16 @@ public class Zombie : MonoBehaviour
 
     private void ChangeMass()
     {
-        if(isWall && isFloor)
+        if(isWall)
+        {
             rb.mass = 8f;
+            anim.SetBool("IsAttacking",true);
+        }
         else
+        {
             rb.mass = 1f;
+            anim.SetBool("IsAttacking",false);
+        }
     }
 
     private void CheckFirst()
