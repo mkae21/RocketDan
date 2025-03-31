@@ -38,7 +38,6 @@ public class Spawner : MonoBehaviour
     //             sr.sortingOrder = 3;
     //         }
     //     }
-
     // }
 
     void Awake()
