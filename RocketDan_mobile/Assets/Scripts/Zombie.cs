@@ -17,6 +17,7 @@ public class Zombie : MonoBehaviour
     [SerializeField] private float rayHeadOffSetX = 0.3f;
     [SerializeField] private float rayHeadOffSetY = 1f;
 
+    private LayerMask layerMask;
     private Vector2 jumpDirection = new Vector2(0,1f).normalized;
     private Vector2 rayPos;
     private Vector2 rayHeadPos;
@@ -43,7 +44,6 @@ public class Zombie : MonoBehaviour
     void FixedUpdate()
     {
         ZombieMove();
-
 
         //앞 검사
         rayPos = new Vector2(transform.position.x - rayOffsetX, transform.position.y + rayOffsetY);
@@ -80,27 +80,16 @@ public class Zombie : MonoBehaviour
         }
     }
 
-    // void OnTriggerStay2D(Collider2D collision)
-    // {
-    //     if (collision.gameObject.CompareTag("Zombie") && !isJump && !isStepped)
-    //     {
-    //         float other = collision.transform.position.y;
-    //         float me = transform.position.y;
-
-    //         if(me < other && isFloor && isWall){
-    //             Debug.Log("✅ 머리 밟힘 조건 통과 → 뒤로 이동!");
-    //             MoveBack();
-    //         }
-    //         // else
-    //         // {
-    //         //     if (me >= other) Debug.Log("❌ 머리보다 위에 있지 않음");
-    //         //     if (!isFloor) Debug.Log("❌ 바닥에 닿아있지 않음");
-    //         //     if (!isWall) Debug.Log("❌ 벽(영웅)에 닿아있지 않음");
-    //         // }
-    //     }
-    // }
 #endregion
 
+#region public 메서드
+    public void InitLayer()
+    {
+        layerMask = 1  << gameObject.layer;
+        Debug.Log("InitLayer: " + LayerMask.LayerToName(gameObject.layer));
+    }
+
+#endregion
 
 #region private 메서드
     private void ZombieMove()
@@ -109,6 +98,7 @@ public class Zombie : MonoBehaviour
             rb.velocity = new Vector2(-speed, rb.velocity.y);
 
     }
+
 
     private void ChangeMass()
     {
@@ -166,7 +156,7 @@ public class Zombie : MonoBehaviour
             rayHeadPos = new Vector2(transform.position.x - rayHeadOffSetX , transform.position.y + rayHeadOffSetY);
             Debug.DrawRay(rayHeadPos, Vector2.up * 0.2f, Color.red);
 
-            RaycastHit2D hit = Physics2D.Raycast(rayHeadPos, Vector2.up, 0.2f);
+            RaycastHit2D hit = Physics2D.Raycast(rayHeadPos, Vector2.up, 0.2f,layerMask);
 
             if(hit.collider != null && hit.collider.CompareTag("Zombie") && !isJump && !isStepped && isFloor && isWall)
             {

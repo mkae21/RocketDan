@@ -68,6 +68,9 @@ public class Spawner : MonoBehaviour
                 zombie.layer = LayerMask.NameToLayer("BottomZombie");
                 sortingGroup.sortingOrder = 3;
             }
+
+            zombie.gameObject.GetComponent<Zombie>().InitLayer();
+
         }
     }
 
